@@ -15,7 +15,12 @@ const generateView = (template, placeholders, data) => {
     let recordView = template;
     for ([placeholder] of placeholders) {
       const placeholderKey = placeholder.substring(1, placeholder.length-1);
-      recordView = recordView.replace(placeholder, product[placeholderKey]);
+
+      if (placeholderKey === "notOrganic") {
+        recordView = recordView.replace(placeholder, product["organic"] ? "" : "not-organic");
+      } else {
+        recordView = recordView.replace(placeholder, product[placeholderKey]);
+      }
     }
     return recordView;
   });
@@ -46,6 +51,4 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
-});
+server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
