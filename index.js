@@ -24,22 +24,25 @@ const generateView = (template, placeholders, data) => {
 const server = http.createServer((req, res) => {
   const { url: path } = req;
 
-  if (path === "/" || path === "/overview") {
-    res.writeHead(200, { "Content-Type": "text/html" });
-    
-    const placeholders = Array.from(productRecordView.matchAll(/{\w*}/g));
-    const productsView = generateView(productRecordView, placeholders, productsObj);
-    
-    res.end(overviewView.replace("{products}", productsView));
-  } else if (path === "/product") {
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(productPageView);
-  } else if (path === "/api") {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(productsObj);
-  } else {
-    res.writeHead(404, { "Content-Type": "text/html" });
-    res.end("<h1>404 Page not found!</h1>");
+  switch (path) {
+    case "/":
+    case "/overview":
+      res.writeHead(200, { "Content-Type": "text/html" });
+      const placeholders = Array.from(productRecordView.matchAll(/{\w*}/g));
+      const productsView = generateView(productRecordView, placeholders, productsObj);
+      res.end(overviewView.replace("{products}", productsView));
+      break;
+    case "/product":
+      res.writeHead(200, { "Content-Type": "text/html" });
+      res.end(productPageView);
+      break;
+    case "/api":
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(productsObj);
+      break;
+    default:
+      res.writeHead(404, { "Content-Type": "text/html" });
+      res.end("<h1>404 Page not found!</h1>");
   }
 });
 
