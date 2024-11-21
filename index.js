@@ -1,5 +1,7 @@
 const fs = require("fs");
 const http = require("http");
+const url = require("url");
+const generateView = require("./utils/generateView");
 
 const PORT = 8000;
 
@@ -10,36 +12,20 @@ const overviewView = fs.readFileSync(`${__dirname}/views/overview.html`, "UTF-8"
 const productPageView = fs.readFileSync(`${__dirname}/views/product-page.html`, "UTF-8");
 const productRecordView = fs.readFileSync(`${__dirname}/views/product-record.html`, "UTF-8");
 
-const generateView = (template, placeholders, data) => {
-  return data.map((product) => {
-    let recordView = template;
-    for ([placeholder] of placeholders) {
-      const placeholderKey = placeholder.substring(1, placeholder.length-1);
-
-      if (placeholderKey === "notOrganic") {
-        recordView = recordView.replace(placeholder, product["organic"] ? "" : "not-organic");
-      } else {
-        recordView = recordView.replace(placeholder, product[placeholderKey]);
-      }
-    }
-    return recordView;
-  });
-}
-
 const server = http.createServer((req, res) => {
-  const { url: path } = req;
+  const { pathname, query } = url.parse(req.url, true);
 
-  switch (path) {
+  switch (pathname) {
     case "/":
     case "/overview":
       res.writeHead(200, { "Content-Type": "text/html" });
-      const placeholders = Array.from(productRecordView.matchAll(/{\w*}/g));
-      const productsView = generateView(productRecordView, placeholders, productsObj);
+      const productsView = generateView(productRecordView, productsObj);
       res.end(overviewView.replace("{products}", productsView));
       break;
     case "/product":
       res.writeHead(200, { "Content-Type": "text/html" });
-      res.end(productPageView);
+      const [productDetailsView] = generateView(productPageView, [productsObj[query.id]]);
+      res.end(productDetailsView);
       break;
     case "/api":
       res.writeHead(200, { "Content-Type": "application/json" });
