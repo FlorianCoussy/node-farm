@@ -8,9 +8,18 @@ const PORT = 8000;
 const products = fs.readFileSync(`${__dirname}/models/data.json`, "UTF-8");
 const productsObj = JSON.parse(products);
 
-const overviewView = fs.readFileSync(`${__dirname}/views/overview.html`, "UTF-8");
-const productPageView = fs.readFileSync(`${__dirname}/views/product-page.html`, "UTF-8");
-const productRecordView = fs.readFileSync(`${__dirname}/views/product-record.html`, "UTF-8");
+const overviewView = fs.readFileSync(
+  `${__dirname}/views/overview.html`,
+  "UTF-8"
+);
+const productPageView = fs.readFileSync(
+  `${__dirname}/views/product-page.html`,
+  "UTF-8"
+);
+const productRecordView = fs.readFileSync(
+  `${__dirname}/views/product-record.html`,
+  "UTF-8"
+);
 
 const server = http.createServer((req, res) => {
   const { pathname, query } = url.parse(req.url, true);
@@ -24,7 +33,9 @@ const server = http.createServer((req, res) => {
       break;
     case "/product":
       res.writeHead(200, { "Content-Type": "text/html" });
-      const [productDetailsView] = generateView(productPageView, [productsObj[query.id]]);
+      const [productDetailsView] = generateView(productPageView, [
+        productsObj[query.id],
+      ]);
       res.end(productDetailsView);
       break;
     case "/api":

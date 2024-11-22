@@ -7,11 +7,14 @@ module.exports = (template, data) => {
       const placeholderKey = placeholder.substring(1, placeholder.length - 1);
 
       if (placeholderKey === "notOrganic") {
-        recordView = recordView.replace(placeholder, product["organic"] ? "" : "not-organic");
+        recordView = recordView.replace(
+          placeholder,
+          product["organic"] ? "" : "not-organic"
+        );
       } else {
         recordView = recordView.replace(placeholder, product[placeholderKey]);
       }
     }
     return recordView;
   });
-}
+};
